@@ -48,7 +48,7 @@ All functions are cross compatible with cstdio, so solution was pretty easy:
 
 There were 2 issues with this solution:
 - not all files are using this function. From tests only files that have hardcoded path starting with "nxcontent" are passed through different functions. It seems there is not many of them (around dozen in Portal 1) and only important one in my opinion was `rom_boot_params.txt` so I have hooked function reading this file and redesigned it to load file from SD card.
-- `fopen_nx()` is dependent on mounted path. So it can change mounted path to `game.zip/nxcontent/` and pass to fopen_nx rest of path. As I didn't want to add additional overhead since checking what is mounted needs some work, solution is just to put folders from nxcontent into romfs root. 
+- `fopen_nx()` is dependent on mounted path. So it can change mounted path to `game.zip/nxcontent/` in Portal 1 and pass to fopen_nx rest of path. As I didn't want to add additional overhead since checking what is mounted needs some work, solution is just to put folders from nxcontent into romfs root. 
 
 # Compilation
 
