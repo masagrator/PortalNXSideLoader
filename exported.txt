@@ -1,0 +1,14 @@
+{
+    global:
+        __custom_init;
+        __custom_fini;
+        skyline_tcp_send_raw;
+        getRegionAddress;
+        A64HookFunction;
+        A64InlineHook;
+        sky_memcpy;
+        get_program_id;
+        get_plugin_addresses;
+        
+    local: *;
+};  
