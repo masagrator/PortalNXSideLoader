@@ -145,9 +145,11 @@ void Portal_main()
 
 	A64HookFunction((void**)&fopen_nx, reinterpret_cast<void*>(fopen_nx_hook), (void**)&fopen_nx_original);
 
+	#ifdef PORTAL2
 	//Hooks needed to run game with connected internet and blocked Nintendo servers
 	A64HookFunction((void**)&nn::account::EnsureNetworkServiceAccountAvailable, reinterpret_cast<void*>(nn::account::EnsureNetworkServiceAccountAvailable_hook), (void**)&nn::account::EnsureNetworkServiceAccountAvailable_original);
 
 	A64HookFunction((void**)&nn::nifm::IsNetworkAvailable, reinterpret_cast<void*>(nn::nifm::IsNetworkAvailable_hook), (void**)&nn::nifm::IsNetworkAvailable_original);
+	#endif
 
 }
