@@ -3,7 +3,7 @@
 #include "skyline/utils/cpputils.hpp"
 #include "skyline/utils/ipc.hpp"
 
-void SPRB_main();
+void Portal_main();
 
 void skyline_main() {
     // populate our own process handle
