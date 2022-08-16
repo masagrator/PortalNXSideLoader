@@ -143,7 +143,7 @@ void Portal_main()
 	#endif
 
 
-	//A64HookFunction((void**)&fopen_nx, reinterpret_cast<void*>(fopen_nx_hook), (void**)&fopen_nx_original);
+	A64HookFunction((void**)&fopen_nx, reinterpret_cast<void*>(fopen_nx_hook), (void**)&fopen_nx_original);
 
 	#ifdef PORTAL2
 		#ifdef PDEBUG
