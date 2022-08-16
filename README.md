@@ -66,7 +66,7 @@ for Portal 2
 ```
 make PORTAL="-DPORTAL2"
 ```
-with internet patches to allow debugging via network
+with internet patches to allow debugging via network that has blocked access to Nintendo servers
 ```
 make PORTAL="-DPORTAL2 -DPDEBUG"
 ```
