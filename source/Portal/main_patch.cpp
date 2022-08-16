@@ -34,21 +34,11 @@ extern "C" {
 }
 
 namespace nn { 
-	
-	namespace account {
-
-		uint64_t (*EnsureNetworkServiceAccountAvailable_original)(nn::account::UserHandle const& userHandle);
-		uint64_t EnsureNetworkServiceAccountAvailable_hook (nn::account::UserHandle const& userHandle) {
-			if (R_FAILED(EnsureNetworkServiceAccountAvailable_original(userHandle)))
-				return 0x27C;
-			return 0;
-		}
-	}
 
 	namespace nifm {
-		uint64_t (*IsNetworkAvailable_original)();
-		uint64_t IsNetworkAvailable_hook() {
-			return 0;
+		uint64_t (*Initialize_original)();
+		uint64_t Initialize_hook() {
+			return 0x27C;
 		}
 	}
 }
@@ -147,10 +137,9 @@ void Portal_main()
 
 	#ifdef PORTAL2
 		#ifdef PDEBUG
-	//Hooks needed to run game with connected internet and blocked Nintendo servers
-	A64HookFunction((void**)&nn::account::EnsureNetworkServiceAccountAvailable, reinterpret_cast<void*>(nn::account::EnsureNetworkServiceAccountAvailable_hook), (void**)&nn::account::EnsureNetworkServiceAccountAvailable_original);
+	//Hook needed to run game with connected internet and blocked Nintendo servers
 
-	A64HookFunction((void**)&nn::nifm::IsNetworkAvailable, reinterpret_cast<void*>(nn::nifm::IsNetworkAvailable_hook), (void**)&nn::nifm::IsNetworkAvailable_original);
+	A64HookFunction((void**)&nn::nifm::Initialize, reinterpret_cast<void*>(nn::nifm::Initialize_hook), (void**)&nn::nifm::Initialize_original);
 		#endif
 	#endif
 
