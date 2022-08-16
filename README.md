@@ -16,7 +16,7 @@ Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 # Informations for mod makers
 
 `nxcontent` folder is not supported fully. Most of files from there you can put into `romfs` folder and they will be working.
-Around dozen of files from this folder needs special treatment and I have worked only to add support for `rom_boot_params.txt`
+Around dozen of files in Portal 1 from this folder needs special treatment and I have worked only to add support for `rom_boot_params.txt`. Portal 2 is still unknown.
 
 So for example we have `Bringus mod` for Portal 1 which uses only `nxcontent` folder as of today.
 Solution to use it is to copy everything from nxcontent folder except `rom_boot_params.txt` directly to `romfs` folder on sdcard, and put also there `nxcontent` folder with just `rom_boot_params.txt` file.
@@ -45,7 +45,7 @@ All functions are cross compatible with cstdio, so solution was pretty easy:
 3. If it exists, redirect call to `fopen()` with correct path starting with `rom:/`
 
 There were 2 issues with this solution:
-- not all files are using this function. From tests only files that have hardcoded path starting with "nxcontent" are passed through different functions. It seems there is not many of them (around dozen) and only important one in my opinion was `rom_boot_params.txt` so I have hooked function reading this file and redesigned it to load file from SD card.
+- not all files are using this function. From tests only files that have hardcoded path starting with "nxcontent" are passed through different functions. It seems there is not many of them (around dozen in Portal 1) and only important one in my opinion was `rom_boot_params.txt` so I have hooked function reading this file and redesigned it to load file from SD card.
 - `fopen_nx()` is dependent on mounted path. So it can change mounted path to `game.zip/nxcontent/` and pass to fopen_nx rest of path. As I didn't want to add additional overhead since checking what is mounted needs some work, solution is just to put folders from nxcontent into romfs root. 
 
 # Compilation
