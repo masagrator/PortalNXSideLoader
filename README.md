@@ -40,7 +40,7 @@ romfs/portal/cfg/rocket.cfg
 # How this works?
 
 Devs redesigned whole cstdio to use game.zip as filesystem.
-Game to open most files is using function called `fopen_nx()`. To read this file - `fread_nx()`, etc.
+Portal 1 to open most files is using function called `fopen_nx()`. To read this file - `fread_nx()`, etc.
 All functions are cross compatible with cstdio, so solution was pretty easy:
 1. Hook `fopen_nx()`
 2. Detect if passed file path exists on SD card
