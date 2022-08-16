@@ -16,7 +16,7 @@ Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 # Informations for mod makers
 
 `nxcontent` folder is not supported fully. Most of files from there you can put into `romfs` folder and they will be working.
-Around dozen of files from this folder needs special treatment and I have worked only to add support for rom_boot_params.txt
+Around dozen of files from this folder needs special treatment and I have worked only to add support for `rom_boot_params.txt`
 
 So for example we have `Bringus mod` for Portal 1 which uses only `nxcontent` folder as of today.
 Solution to use it is copy everything from nxcontent folder except `rom_boot_params.txt` directly to `romfs` folder on sdcard, and put also there `nxcontent` folder with just `rom_boot_params.txt` file.
