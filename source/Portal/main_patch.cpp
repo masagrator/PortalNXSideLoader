@@ -131,7 +131,7 @@ FILE* fopen_nx_hook(const char* path, const char* mode) {
 	return fopen(filepath, mode);
 }
 
-void SPRB_main()
+void Portal_main()
 {
 	TextRegionOffset = (uintptr_t)skyline::utils::getRegionAddress(skyline::utils::region::Text);
 
