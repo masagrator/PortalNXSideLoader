@@ -290,12 +290,12 @@ void Portal_main()
 
 	//Hook NRO loading
 	A64HookFunction((void**)&nn::ro::LoadModule, reinterpret_cast<void*>(LoadModule_hook), (void**)&LoadModule_original);
+
+	A64HookFunction((void**)&strchr, reinterpret_cast<void*>(strchr_hook), (void**)&strchr_original);
 	#endif
 
 
 	A64HookFunction((void**)&fopen_nx, reinterpret_cast<void*>(fopen_nx_hook), (void**)&fopen_nx_original);
-
-	A64HookFunction((void**)&strchr, reinterpret_cast<void*>(strchr_hook), (void**)&strchr_original);
 
 	#ifdef PORTAL2
 		#ifdef PDEBUG
