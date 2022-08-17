@@ -48,7 +48,6 @@ All functions are cross compatible with cstdio, so solution was pretty easy:
 
 Portal 2 is using whole filesystem class named CBaseFileSystem from which it manages files called for reading via other executables. 
 - For writing it moves into fopen_nx(). Redirected it, but not all files are loaded correctly because of files without absolute path.
-- It seems that files without absolute path are checked within all folders on root and the one with newer date is loaded.
 Work in progress.
 
 There were 2 issues with this solution:
