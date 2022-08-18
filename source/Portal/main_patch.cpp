@@ -35,16 +35,14 @@ namespace nn {
 	}
 }
 
-char * strtolower( char * dest, const char * src, size_t n )
+char* strtolower(char* dest, const char* src, size_t len)
 {
-	if( !n )
+	if (!len)
 		return 0;
 
-	else
-	{
-		n += 1;
-		char * d = dest;
-		while ( *src && --n > 0)
+	else {
+		char* d = dest;
+		while (*src && len-- > 0)
 			*d++ = tolower(*src++);
 
 		*d = 0;
