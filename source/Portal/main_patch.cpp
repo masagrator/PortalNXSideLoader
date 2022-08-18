@@ -24,12 +24,7 @@ ptrdiff_t returnInstructionOffset(uintptr_t LR) {
 }
 
 extern "C" {
-	FILE* fopen ( const char * filename, const char * mode );
 	FILE* fopen_nx ( const char * filename, const char * mode );
-	int fseek( FILE * stream, long offset, int origin );
-	size_t fread( void * buffer, size_t size, size_t count, FILE * stream );
-	int fclose( FILE * stream );
-	long ftell( FILE * stream );
 	#ifdef PORTAL2
 	void* _ZN2nn3mem17StandardAllocator8AllocateEm(void* _this, size_t size);
 	#endif
