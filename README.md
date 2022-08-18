@@ -19,11 +19,11 @@ Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 
 # Informations for mod makers
 
-Few files in `nxcontent` may not be supported as they are preloaded with separate functions. I needed to add specific support for one function so `rom_boot_params.txt` could be loaded. If there is any file it's not working and you want it to work, write na issue.
+Few files in `nxcontent` may not be supported as they are preloaded with separate functions. I needed to add specific support for one function so `rom_boot_params.txt` could be loaded. If there is any file that is not working and you want it to work, write na issue.
 
 # How this works?
 
-Devs redesigned whole cstdio to use game.zip as filesystem.
+Game devs redesigned whole cstdio to use game.zip as filesystem.
 Portal games to open most files are using function called `fopen_nx()`. To read this file - `fread_nx()`, etc.
 All functions are cross compatible with cstdio, so solution was pretty easy:
 1. Hook `fopen_nx()`
