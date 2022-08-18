@@ -2,7 +2,7 @@
 
 # Portal Collection File Sideloader
 
-Plugin for Portal 1 and 2 that allow to load files outside of game.zip, so no more repacking and sending huge archives every time you want to change something.
+Nintendo Switch plugin for Portal 1 and 2 that allow to load files outside of game.zip, so no more repacking and sending huge archives every time you want to change something.
 
 # Installation
 From releases download:
