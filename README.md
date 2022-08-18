@@ -32,7 +32,7 @@ All functions are cross compatible with cstdio, so solution was pretty easy:
 
 There were 2 issues with this solution:
 - not all files are using this function. It seems there is not many of them and only important one in my opinion was `rom_boot_params.txt` so I have hooked function reading this file and redesigned it to load file from SD card.
-- `fopen_nx()` path load is ignoring case + has priority to check first if file is inside `nxcontent` folder, and if not checks root of zip. Inside hook I've reimplement this check + used `tolower()` for file path since all files and folders names inside zip are lower case.
+- `fopen_nx()` path load is ignoring case + has priority to check first if file is inside `nxcontent` folder, and if not checks root of zip. Inside hook I've reimplemented this check + used `tolower()` for file path since all files and folders names inside zip are lower case.
 
 # Compilation
 
