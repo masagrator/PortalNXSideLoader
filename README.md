@@ -2,7 +2,7 @@
 
 # Portal Collection File Sideloader
 
-# Installation (not released yet) 
+# Installation
 From releases download:
 - for Portal 1:
 > Portal-NXSideLoader.zip
@@ -17,42 +17,20 @@ Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 
 # Informations for mod makers
 
-`nxcontent` folder is not supported fully. Most of files from there you can put into `romfs` folder and they will be working.
-Around dozen of files in Portal 1 from this folder needs special treatment and I have worked only to add support for `rom_boot_params.txt`. Portal 2 is still under development. 
-
-So for example we have `Bringus mod` for Portal 1 which uses only `nxcontent` folder as of today.
-Solution to use it is to copy everything from nxcontent folder except `rom_boot_params.txt` directly to `romfs` folder on sdcard, and put also there `nxcontent` folder with just `rom_boot_params.txt` file.
-
-Example:
-- Before
-```
-romfs/nxcontent/rom_boot_params.txt
-romfs/nxcontent/portal/resource/gamemenu.res
-romfs/nxcontent/portal/cfg/rocket.cfg
-```
-- After
-```
-romfs/nxcontent/rom_boot_params.txt
-romfs/portal/resource/gamemenu.res
-romfs/portal/cfg/rocket.cfg
-```
+Few files in `nxcontent` may not be supported as they are preloaded with separate functions. I needed to add specific support for one function so `rom_boot_params.txt` could be loaded. If there is any file it's not working and you want it to work, write na issue.
 
 # How this works?
 
 Devs redesigned whole cstdio to use game.zip as filesystem.
-Portal 1 to open most files is using function called `fopen_nx()`. To read this file - `fread_nx()`, etc.
+Portal games to open most files are using function called `fopen_nx()`. To read this file - `fread_nx()`, etc.
 All functions are cross compatible with cstdio, so solution was pretty easy:
 1. Hook `fopen_nx()`
 2. Detect if passed file path exists on SD card
 3. If it exists, redirect call to `fopen()` with correct path starting with `rom:/`
 
-Portal 2 is using whole filesystem class named CBaseFileSystem from which it manages files called for reading via other executables. 
-- For writing it moves into fopen_nx(). Redirected it, but not all files are loaded correctly because of files without absolute path.
-Work in progress.
-
 There were 2 issues with this solution:
-- not all files are using this function. From tests only files that have hardcoded path starting with "nxcontent" are passed through different functions. It seems there is not many of them (around dozen in Portal 1) and only important one in my opinion was `rom_boot_params.txt` so I have hooked function reading this file and redesigned it to load file from SD card.
-- `fopen_nx()` is dependent on mounted path. So it can change mounted path to `game.zip/nxcontent/` in Portal 1 and pass to fopen_nx rest of path. As I didn't want to add additional overhead since checking what is mounted needs some work, solution is just to put folders from nxcontent into romfs root. 
+- not all files are using this function. It seems there is not many of them and only important one in my opinion was `rom_boot_params.txt` so I have hooked function reading this file and redesigned it to load file from SD card.
+- fopen_nx() path load is ignoring case + has priority to check first if file is inside `nxcontent` folder, and if not checks root of zip. Inside hook remade this check + used `tolower()` for file path since all files and folders names inside zip are lower case.
 
 # Compilation
 
