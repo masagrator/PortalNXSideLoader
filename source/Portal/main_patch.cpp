@@ -10,12 +10,7 @@
 #include "skyline/utils/cpputils.hpp"
 #include "skyline/inlinehook/memcpy_controlled.hpp"
 #include "nn/fs.h"
-#include "nn/account.h"
 #include "nn/nifm.h"
-#include "nn/ro.h"
-#include <string>
-#include <algorithm>
-#include <vector>
 
 uintptr_t TextRegionOffset = 0;
 
@@ -52,6 +47,7 @@ char * strtolower( char * dest, const char * src, size_t n )
 		while ( *src && --n > 0)
 			*d++ = tolower(*src++);
 
+		*d = 0;
 		return dest;
 	}
 }
@@ -113,11 +109,9 @@ char filepath[256] = "";
 FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
 	nn::fs::FileHandle filehandle;
-	memset(&filepath[0], 0, strlen(&filepath[0]));
 	formatPath(path, &filepath[0], true);
 
 	if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read))) {
-		memset(&filepath[0], 0, strlen(&filepath[0]));
 		formatPath(path, &filepath[0], false);
 
 		if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read)))
