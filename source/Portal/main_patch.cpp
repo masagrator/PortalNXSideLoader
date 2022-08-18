@@ -61,7 +61,7 @@ char * strtolower( char * dest, const char * src, size_t n )
 	}
 }
 
-bool formatPath (const char* path, char* filepath, bool NXCONTENT) {
+void formatPath (const char* path, char* filepath, bool NXCONTENT) {
 	char temp[256] = "";
 	if (!NXCONTENT) {
 		if (!strncmp(path, "/", 1))
@@ -77,7 +77,6 @@ bool formatPath (const char* path, char* filepath, bool NXCONTENT) {
 			sprintf(&temp[0], "rom:/nxcontent/%s", path);
 		strtolower(filepath, &temp[0], strlen(&temp[0]));
 	}
-	return true;
 }
 
 struct fopen2Struct {
@@ -88,9 +87,7 @@ struct fopen2Struct {
 void (*fopen2_original)(fopen2Struct* _struct, void* x1, const char* path);
 void fopen2_hook(fopen2Struct* _struct, void* x1, const char* path){
 	char filepath[256] = "";
-	bool formatted = formatPath(path, &filepath[0], false);
-	if (!formatted)
-		return fopen2_original(_struct, x1, path);
+	formatPath(path, &filepath[0], false);
 
 	FILE* file = fopen(filepath, "r");
 	if(!file)
@@ -122,15 +119,12 @@ FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
 	nn::fs::FileHandle filehandle;
 	memset(&filepath[0], 0, strlen(&filepath[0]));
-	bool formatted = formatPath(path, &filepath[0], true);
-	if (!formatted)
-		return fopen_nx_original(path, mode);
+	formatPath(path, &filepath[0], true);
 
 	if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read))) {
 		memset(&filepath[0], 0, strlen(&filepath[0]));
-		bool formatted = formatPath(path, &filepath[0], false);
-		if (!formatted)
-			return fopen_nx_original(path, mode);
+		formatPath(path, &filepath[0], false);
+
 		if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read)))
 			return fopen_nx_original(path, mode);
 	}
