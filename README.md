@@ -7,10 +7,10 @@ From releases download:
 - for Portal 1:
 > Portal-NXSideLoader.zip
 - for Portal 2:
->Without network patches:
+>Without network patches (it won't block you from using network):
 > - Portal2-NXSideLoader.zip
 >
-> With network patches:
+> With network patches (for people that block Nintendo servers, it will block game from connecting to network to prevent crash + helps with debugging):
 > - Portal2-NoWeb-NXSideLoader.zip
 
 Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
