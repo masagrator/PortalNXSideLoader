@@ -11,6 +11,7 @@
 #include "skyline/inlinehook/memcpy_controlled.hpp"
 #include "nn/fs.h"
 #include "nn/nifm.h"
+#include <sys/stat.h>
 
 uintptr_t TextRegionOffset = 0;
 
@@ -19,6 +20,7 @@ ptrdiff_t returnInstructionOffset(uintptr_t LR) {
 }
 
 extern "C" {
+	int stat_nx(const char* pathname, struct stat* statbuf);
 	FILE* fopen_nx ( const char * filename, const char * mode );
 	#ifdef PORTAL2
 	void* _ZN2nn3mem17StandardAllocator8AllocateEm(void* _this, size_t size);
@@ -66,6 +68,26 @@ void formatPath (const char* path, char* filepath, bool NXCONTENT) {
 			sprintf(&temp[0], "rom:/nxcontent/%s", path);
 		strtolower(filepath, &temp[0], strlen(&temp[0]));
 	}
+}
+
+int (*stat_nx_original)(const char* pathname, struct stat* statbuf);
+int stat_nx_hook(const char* pathname, struct stat* statbuf) {
+	int ret = stat_nx_original(pathname, statbuf);
+	if (!ret)
+		return ret;
+	if (!strncmp(pathname, "/;", 2))
+		return ret;
+	char filepath[256] = "";
+	formatPath(pathname, &filepath[0], true);
+	struct stat temp_statbuf;
+	int ret2 = stat(&filepath[0], &temp_statbuf);
+	if (!ret2)
+		return stat(&filepath[0], statbuf);
+	formatPath(pathname, &filepath[0], false);
+	ret2 = stat(&filepath[0], &temp_statbuf);
+	if (!ret2)
+		return stat(&filepath[0], statbuf);
+	return ret;
 }
 
 struct fopen2Struct {
@@ -132,6 +154,7 @@ void Portal_main()
 
 
 	A64HookFunction((void**)&fopen_nx, reinterpret_cast<void*>(fopen_nx_hook), (void**)&fopen_nx_original);
+	A64HookFunction((void**)&stat_nx, reinterpret_cast<void*>(stat_nx_hook), (void**)&stat_nx_original);
 
 	#ifdef PORTAL2
 		#ifdef PDEBUG
