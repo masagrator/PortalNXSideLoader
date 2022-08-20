@@ -23,7 +23,7 @@ Few files in `nxcontent` may not be supported as they are preloaded with separat
 
 Game refuses to load some materials within BSP, I don't know exact details why. Solution is to unpack materials folder and put it into main mod folder.
 
-All file names must be lower case.
+All file names must be lower case. Modifying source code is unsupported for this mod. You would need to make your own hooks manually.
 
 # How this works?
 
