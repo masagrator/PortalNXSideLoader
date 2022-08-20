@@ -21,6 +21,8 @@ Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 
 Few files in `nxcontent` may not be supported as they are preloaded with separate functions. I needed to add specific support for one function so `rom_boot_params.txt` could be loaded. If there is any file that is not working and you want it to work, write na issue.
 
+Game refuses to load some materials within BSP, I don't know exact details why. Solution is to unpack materials folder and put it into main mod folder.
+
 # How this works?
 
 Game devs redesigned whole cstdio to use game.zip as filesystem.
