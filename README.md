@@ -23,6 +23,8 @@ Few files in `nxcontent` may not be supported as they are preloaded with separat
 
 Game refuses to load some materials within BSP, I don't know exact details why. Solution is to unpack materials folder and put it into main mod folder.
 
+All files must be lower case.
+
 # How this works?
 
 Game devs redesigned whole cstdio to use game.zip as filesystem.
