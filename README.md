@@ -33,6 +33,7 @@ All functions are cross compatible with cstdio, so solution was pretty easy:
 1. Hook `fopen_nx()`
 2. Detect if passed file path exists on SD card
 3. If it exists, redirect call to `fopen()` with correct path starting with `rom:/`
+4. Hook additionally stat_nx so game can properly detect custom content
 
 There were 2 issues with this solution:
 - not all files are using this function. It seems there is not many of them and only important one in my opinion was `rom_boot_params.txt` so I have hooked function reading this file and redesigned it to load file from SD card.
