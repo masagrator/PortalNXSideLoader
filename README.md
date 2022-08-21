@@ -30,7 +30,7 @@ Game supports vscripts.
 
 All file names must be lower case. Modifying source code is unsupported for this mod. You would need to make your own hooks manually.
 
-Mods needs to have properly optimized CPU code, otherwise Switch will be choking. 
+Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
 
 Example of properly optimized mod:
 - Portal Reloaded
