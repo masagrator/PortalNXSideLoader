@@ -25,7 +25,7 @@ Few files in `nxcontent` may not be supported as they are preloaded with separat
 
 Bigger mods like Portal Reloaded must be put as "portal2_dlc2" inside `nxcontent` folder. 
 
-Game refuses to load some materials within BSP, I don't know exact details why. Solution is to unpack materials folder and put it into main mod folder.
+Game refuses to load some materials within BSP, I don't know exact details why. Solution is to unpack materials folder (with `VIDE`'s Package Manager or `BSPSource` - you must check "extract embedded files" and uncheck "smart unpacking") and put it into main mod folder.
 Game supports vscripts.
 
 All file names must be lower case. Modifying source code is unsupported for this mod. You would need to make your own hooks manually.
