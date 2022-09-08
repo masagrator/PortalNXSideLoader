@@ -113,7 +113,7 @@ void fopen2_hook(fopen2Struct* _struct, void* x1, const char* path){
 	void* new_buffer = malloc(size);
 	#endif
 	#ifdef PORTAL2
-	void* Allocator = (void*)(TextRegionOffset+0x861078);
+	void* Allocator = (void*)(TextRegionOffset+0x860078);
 	void* new_buffer = _ZN2nn3mem17StandardAllocator8AllocateEm(Allocator, size);
 	#endif
 
