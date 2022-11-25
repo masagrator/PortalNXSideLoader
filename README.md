@@ -23,7 +23,7 @@ Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 
 Few files in `nxcontent` may not be supported as they are preloaded with separate functions. I needed to add specific support for one function so `rom_boot_params.txt` could be loaded. If there is any file that is not working and you want it to work, write an issue.
 
-Bigger mods like Portal Reloaded must be put as "portal2_dlc2" inside `nxcontent` folder in case of `Portal 2` mods, for `Portal` mods put it as `portal`. 
+Bigger mods like Portal Reloaded must be put as "portal2_dlc2" inside `nxcontent` folder in case of `Portal 2` mods, for `Portal` mods put it as "portal". 
 
 Game refuses to load some materials within BSP, I don't know exact details why. Solution is to unpack materials folder (with `VIDE`'s Package Manager or `BSPSource` - you must check "extract embedded files" and uncheck "smart unpacking") and put it into main mod folder.
 Game supports vscripts.
