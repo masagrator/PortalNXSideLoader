@@ -128,6 +128,9 @@ char filepath[256] = "";
 
 FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
+	if (strstr(mode, "w") || strstr(mode, "+") || strstr(mode, "a"))
+		return fopen_nx_original(path, mode);
+
 	nn::fs::FileHandle filehandle;
 	formatPath(path, &filepath[0], true);
 
