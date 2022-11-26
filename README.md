@@ -19,13 +19,21 @@ From releases download:
 
 Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 
+# How to install mod
+
+Rename main mod folder (for example in case of Portal Reloaded it's "portalreloaded") to, depending on game:
+- Portal: `portal`
+- Portal 2: `portal2_dlc2`
+
+and put this folder into:
+
+- Portal: `atmosphere/contents/01007BB017812000/romfs/nxcontent/`
+- Portal 2: `atmosphere/contents/0100ABD01785C000/romfs/nxcontent/`
+
+
 # Informations for mod makers
 
 Few files in `nxcontent` may not be supported as they are preloaded with separate functions. I needed to add specific support for one function so `rom_boot_params.txt` could be loaded. If there is any file that is not working and you want it to work, write an issue.
-
-In case of bigger mods we must put main mod folder inside romfs/nxcontent folder. Rename main mod folder (for example in case of Portal Reloaded it's "portalreloaded") to, depending on game:
-- Portal: `portal`
-- Portal 2: `portal2_dlc2`
 
 Game supports vscripts.
 
