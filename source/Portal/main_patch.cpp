@@ -13,6 +13,12 @@
 #include "nn/nifm.h"
 #include <sys/stat.h>
 
+//Enabling PORTAL_LOG makes loading game files drastically slower mainly because of stat_nx
+#ifdef PORTAL_LOG
+FILE* nx_log = 0;
+FILE* stat_log = 0;
+#endif
+
 uintptr_t TextRegionOffset = 0;
 
 ptrdiff_t returnInstructionOffset(uintptr_t LR) {
@@ -72,6 +78,12 @@ void formatPath (const char* path, char* filepath, bool NXCONTENT) {
 
 int (*stat_nx_original)(const char* pathname, struct stat* statbuf);
 int stat_nx_hook(const char* pathname, struct stat* statbuf) {
+	#ifdef PORTAL_LOG
+	stat_log = fopen("sdmc:/Portal_stat.txt", "a");
+	fwrite((const void*)pathname, strlen(pathname), 1, stat_log);
+	fwrite((const void*)&"\n", 1, 1, stat_log);
+	fclose(stat_log);
+	#endif
 	int ret = stat_nx_original(pathname, statbuf);
 	if (!ret)
 		return ret;
@@ -97,6 +109,13 @@ struct fopen2Struct {
 
 void (*fopen2_original)(fopen2Struct* _struct, void* x1, const char* path);
 void fopen2_hook(fopen2Struct* _struct, void* x1, const char* path){
+	#ifdef PORTAL_LOG
+	nn::fs::MountSdCardForDebug("sdmc");
+	nx_log = fopen("sdmc:/Portal.txt", "w");
+	stat_log = fopen("sdmc:/Portal_stat.txt", "w");
+	fclose(nx_log);
+	fclose(stat_log);
+	#endif
 	char filepath[256] = "";
 	formatPath(path, &filepath[0], false);
 
@@ -128,6 +147,14 @@ char filepath[256] = "";
 
 FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
+	#ifdef PORTAL_LOG
+	nx_log = fopen("sdmc:/Portal.txt", "a");
+	fwrite((const void*)path, strlen(path), 1, nx_log);
+	fwrite((const void*)&" ", 1, 1, nx_log);
+	fwrite((const void*)mode, strlen(mode), 1, nx_log);
+	fwrite((const void*)&"\n", 1, 1, nx_log);
+	fclose(nx_log);
+	#endif
 	if (strstr(mode, "w") || strstr(mode, "+") || strstr(mode, "a"))
 		return fopen_nx_original(path, mode);
 
