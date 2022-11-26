@@ -15,6 +15,8 @@
 
 //Enabling PORTAL_LOG makes loading game files drastically slower mainly because of stat_nx
 #ifdef PORTAL_LOG
+bool nx_lock = false;
+bool stat_lock = false;
 FILE* nx_log = 0;
 FILE* stat_log = 0;
 #endif
@@ -80,10 +82,16 @@ int (*stat_nx_original)(const char* pathname, struct stat* statbuf);
 int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 	#ifdef PORTAL_LOG
 	if (pathname) {
+		while (stat_lock) 
+			nn::os::SleepThread(nn::TimeSpan(1000000));
+		stat_lock = true;
 		stat_log = fopen("sdmc:/Portal_stat.txt", "a");
-		fwrite((const void*)pathname, strlen(pathname), 1, stat_log);
-		fwrite((const void*)&"\n", 1, 1, stat_log);
-		fclose(stat_log);
+		if (stat_log) {
+			fwrite((const void*)pathname, strlen(pathname), 1, stat_log);
+			fwrite((const void*)&"\n", 1, 1, stat_log);
+			fclose(stat_log);
+		}
+		stat_lock = false;
 	}
 	#endif
 	int ret = stat_nx_original(pathname, statbuf);
@@ -155,12 +163,18 @@ FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
 	#ifdef PORTAL_LOG
 	if (path && mode) {
+		while (nx_lock) 
+			nn::os::SleepThread(nn::TimeSpan(1000000));
+		nx_lock = true;
 		nx_log = fopen("sdmc:/Portal.txt", "a");
-		fwrite((const void*)path, strlen(path), 1, nx_log);
-		fwrite((const void*)&" ", 1, 1, nx_log);
-		fwrite((const void*)mode, strlen(mode), 1, nx_log);
-		fwrite((const void*)&"\n", 1, 1, nx_log);
-		fclose(nx_log);
+		if (nx_log) {
+			fwrite((const void*)path, strlen(path), 1, nx_log);
+			fwrite((const void*)&" ", 1, 1, nx_log);
+			fwrite((const void*)mode, strlen(mode), 1, nx_log);
+			fwrite((const void*)&"\n", 1, 1, nx_log);
+			fclose(nx_log);
+		}
+		nx_lock = false;
 	}
 	#endif
 	if (strstr(mode, "w") || strstr(mode, "+") || strstr(mode, "a"))
