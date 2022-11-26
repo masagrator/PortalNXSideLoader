@@ -23,7 +23,7 @@ Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 
 Rename main mod folder (for example in case of Portal Reloaded it's "portalreloaded") to, depending on game:
 - Portal: `portal`
-- Portal 2: `portal2_dlc2`
+- Portal 2: `portal2_dlc3`
 
 and put this folder into:
 
