@@ -4,7 +4,7 @@
 
 Nintendo Switch plugin for Portal 1 and 2 that allows to load files outside of game.zip, so no more repacking and sending huge archives every time you want to change something.
 
-# Installation
+# Plugin installation
 You must have 1.0.3 version of Portal 2 and version 1.0.2 or 1.0.3 of Portal
 
 From releases download:
@@ -19,24 +19,38 @@ From releases download:
 
 Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 
+# How to install mod
+
+Rename main mod folder (for example in case of Portal Reloaded it's "portalreloaded") to, depending on game:
+- Portal: `portal`
+- Portal 2: `portal2_dlc2`
+
+and put this folder into:
+
+- Portal: `atmosphere/contents/01007BB017812000/romfs/nxcontent/`
+- Portal 2: `atmosphere/contents/0100ABD01785C000/romfs/nxcontent/`
+
+All folder and file names inside romfs folder MUST be lower case!
+
+Some mods are overwriting menu options, so you can lose access to Switch controller settings. They are stored either freely somewhere inside mod folder OR they are packed to some vpk file.
+
+Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
+
+Examples of properly optimized mods:
+- Portal Reloaded
+- ERROR
+- Portal: Still Alive
+
+Examples of badly optimized mods:
+- Portal Stories: Mel
+
 # Informations for mod makers
 
 Few files in `nxcontent` may not be supported as they are preloaded with separate functions. I needed to add specific support for one function so `rom_boot_params.txt` could be loaded. If there is any file that is not working and you want it to work, write an issue.
 
-Bigger mods like Portal Reloaded must be put as "portal2_dlc2" inside `nxcontent` folder in case of `Portal 2` mods, for `Portal` mods put it as "portal". 
-
-Game refuses to load some materials within BSP, I don't know exact details why. Solution is to unpack materials folder (with `VIDE`'s Package Manager or `BSPSource` - you must check "extract embedded files" and uncheck "smart unpacking") and put it into main mod folder.
 Game supports vscripts.
 
-All file names must be lower case. Modifying source code is unsupported for this mod. You would need to make your own hooks manually.
-
-Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
-
-Example of properly optimized mod:
-- Portal Reloaded
-
-Example of badly optimized mod:
-- Portal Stories: Mel
+Modifying source code is unsupported for this mod. You would need to make your own hooks manually.
 
 # How this works?
 
@@ -50,7 +64,7 @@ All functions are cross compatible with cstdio, so solution was pretty easy:
 
 There were 2 issues with this solution:
 - not all files are using this function. It seems there is not many of them and only important one in my opinion was `rom_boot_params.txt` so I have hooked function reading this file and redesigned it to load file from SD card.
-- `fopen_nx()` path load is ignoring case + has priority to check first if file is inside `nxcontent` folder, and if not checks root of zip. Inside hook I've reimplemented this check + used `tolower()` for file path since all files and folders names inside zip are lower case.
+- `fopen_nx()` path load is ignoring case + has priority to check first if file is inside `nxcontent` folder, and if not checks root of zip. Inside hook I've reimplemented this check + used `tolower()` for file path since HOS romfs file loading is case sensitive and all original files are lower case.
 
 # Compilation
 
