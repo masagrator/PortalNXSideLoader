@@ -4,7 +4,7 @@
 
 Nintendo Switch plugin for Portal 1 and 2 that allows to load files outside of game.zip, so no more repacking and sending huge archives every time you want to change something.
 
-# Installation
+# Plugin installation
 You must have 1.0.3 version of Portal 2 and version 1.0.2 or 1.0.3 of Portal
 
 From releases download:
