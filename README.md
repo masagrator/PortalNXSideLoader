@@ -30,6 +30,8 @@ and put this folder into:
 - Portal: `atmosphere/contents/01007BB017812000/romfs/nxcontent/`
 - Portal 2: `atmosphere/contents/0100ABD01785C000/romfs/nxcontent/`
 
+`nxcontent`, `portal` and `portal2_dlc2` names MUST be lower case!
+
 
 # Informations for mod makers
 
