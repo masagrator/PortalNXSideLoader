@@ -13,10 +13,11 @@
 #include "nn/nifm.h"
 #include <sys/stat.h>
 
-//Enabling PORTAL_LOG makes loading game files drastically slower mainly because of stat_nx
-#ifdef PORTAL_LOG
 bool nx_lock = false;
 bool stat_lock = false;
+
+//Enabling PORTAL_LOG makes loading game files drastically slower mainly because of stat_nx
+#ifdef PORTAL_LOG
 FILE* nx_log = 0;
 FILE* stat_log = 0;
 #endif
@@ -81,11 +82,12 @@ void formatPath (const char* path, char* filepath, bool NXCONTENT) {
 int (*stat_nx_original)(const char* pathname, struct stat* statbuf);
 int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 
+	while (stat_lock) 
+		nn::os::SleepThread(nn::TimeSpan(1000000));
+	stat_lock = true;
+
 	#ifdef PORTAL_LOG
 	if (pathname) {
-		while (stat_lock) 
-			nn::os::SleepThread(nn::TimeSpan(1000000));
-		stat_lock = true;
 		stat_log = fopen("sdmc:/Portal_stat.txt", "a");
 		if (stat_log) {
 			fwrite("Original path: ", strlen("Original path: "), 1, stat_log);
@@ -101,9 +103,9 @@ int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 		#ifdef PORTAL_LOG
 		fwrite("Found in game.zip: true\n\n", strlen("Found in game.zip: true\n\n"), 1, stat_log);
 		fclose(stat_log);
-		stat_lock = false;
 		#endif
 
+		stat_lock = false;
 		return ret;
 	}
 
@@ -116,15 +118,13 @@ int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 		#ifdef PORTAL_LOG
 		fwrite((const void*)&"\n", 1, 1, stat_log);
 		fclose(stat_log);
-		stat_lock = false;
 		#endif
 
+		stat_lock = false;
 		return ret;
 	}
 	char filepath[256] = "";
 	formatPath(pathname, &filepath[0], true);
-	struct stat temp_statbuf;
-	int ret2 = stat(&filepath[0], &temp_statbuf);
 
 	#ifdef PORTAL_LOG
 	fwrite("Checked on sdcard as: ", strlen("Checked on sdcard as: "), 1, stat_log);
@@ -133,14 +133,19 @@ int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 	fwrite("Result: ", strlen("Result: "), 1, stat_log);
 	#endif
 
+	struct stat temp_statbuf;
+	int ret2 = stat(&filepath[0], &temp_statbuf);
+
 	if (!ret2) {
 
 		#ifdef PORTAL_LOG
 		fwrite("true\n\n", strlen("true\n\n"), 1, stat_log);
 		fclose(stat_log);
-		stat_lock = false;
 		#endif
 
+		//We are doing this second time because after first use of stat filepath buffer is cleared out god know why
+		formatPath(pathname, &filepath[0], true);
+		stat_lock = false;
 		return stat(&filepath[0], statbuf);
 	}
 
@@ -149,7 +154,6 @@ int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 	#endif
 
 	formatPath(pathname, &filepath[0], false);
-	ret2 = stat(&filepath[0], &temp_statbuf);
 
 	#ifdef PORTAL_LOG
 	fwrite("Checked on sdcard as: ", strlen("Checked on sdcard as: "), 1, stat_log);
@@ -158,23 +162,27 @@ int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 	fwrite("Result: ", strlen("Result: "), 1, stat_log);
 	#endif
 
+	ret2 = stat(&filepath[0], &temp_statbuf);
+
 	if (!ret2) {
 
 		#ifdef PORTAL_LOG
 		fwrite("true\n\n", strlen("true\n\n"), 1, stat_log);
 		fclose(stat_log);
-		stat_lock = false;
 		#endif
 
+		//We are doing this second time because after first use of stat filepath buffer is cleared out god know why
+		formatPath(pathname, &filepath[0], false);
+		stat_lock = false;
 		return stat(&filepath[0], statbuf);
 	}
 
 	#ifdef PORTAL_LOG
 	fwrite("false\n\n", strlen("false\n\n"), 1, stat_log);
 	fclose(stat_log);
-	stat_lock = false;
 	#endif
 
+	stat_lock = false;
 	return ret;
 }
 
@@ -228,11 +236,12 @@ char filepath[256] = "";
 FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
 
+	while (nx_lock) 
+		nn::os::SleepThread(nn::TimeSpan(1000000));
+	nx_lock = true;
+
 	#ifdef PORTAL_LOG
 	if (path && mode) {
-		while (nx_lock) 
-			nn::os::SleepThread(nn::TimeSpan(1000000));
-		nx_lock = true;
 		nx_log = fopen("sdmc:/Portal.txt", "a");
 		if (nx_log) {
 			fwrite((const void*)path, strlen(path), 1, nx_log);
@@ -241,12 +250,13 @@ FILE* fopen_nx_hook(const char* path, const char* mode) {
 			fwrite((const void*)&"\n", 1, 1, nx_log);
 			fclose(nx_log);
 		}
-		nx_lock = false;
 	}
 	#endif
 
-	if (strstr(mode, "w") || strstr(mode, "+") || strstr(mode, "a"))
+	if (strstr(mode, "w") || strstr(mode, "+") || strstr(mode, "a")) {
+		nx_lock = false;
 		return fopen_nx_original(path, mode);
+	}
 
 	nn::fs::FileHandle filehandle;
 	formatPath(path, &filepath[0], true);
@@ -254,10 +264,13 @@ FILE* fopen_nx_hook(const char* path, const char* mode) {
 	if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read))) {
 		formatPath(path, &filepath[0], false);
 
-		if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read)))
+		if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read))) {
+			nx_lock = false;
 			return fopen_nx_original(path, mode);
+		}
 	}
 	nn::fs::CloseFile(filehandle);
+	nx_lock = false;
 	return fopen(&filepath[0], mode);
 }
 
