@@ -80,6 +80,7 @@ void formatPath (const char* path, char* filepath, bool NXCONTENT) {
 
 int (*stat_nx_original)(const char* pathname, struct stat* statbuf);
 int stat_nx_hook(const char* pathname, struct stat* statbuf) {
+
 	#ifdef PORTAL_LOG
 	if (pathname) {
 		while (stat_lock) 
@@ -87,28 +88,89 @@ int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 		stat_lock = true;
 		stat_log = fopen("sdmc:/Portal_stat.txt", "a");
 		if (stat_log) {
+			fwrite("Original path: ", strlen("Original path: "), 1, stat_log);
 			fwrite((const void*)pathname, strlen(pathname), 1, stat_log);
 			fwrite((const void*)&"\n", 1, 1, stat_log);
-			fclose(stat_log);
 		}
-		stat_lock = false;
 	}
 	#endif
+
 	int ret = stat_nx_original(pathname, statbuf);
-	if (!ret)
+	if (!ret) {
+
+		#ifdef PORTAL_LOG
+		fwrite("Found in game.zip: true\n\n", strlen("Found in game.zip: true\n\n"), 1, stat_log);
+		fclose(stat_log);
+		stat_lock = false;
+		#endif
+
 		return ret;
-	if (!strncmp(pathname, "/;", 2))
+	}
+	fwrite("Found in game.zip: false\n", strlen("Found in game.zip: false\n"), 1, stat_log);
+	if (!strncmp(pathname, "/;", 2)) {
+
+		#ifdef PORTAL_LOG
+		fwrite((const void*)&"\n", 1, 1, stat_log);
+		fclose(stat_log);
+		stat_lock = false;
+		#endif
+
 		return ret;
+	}
 	char filepath[256] = "";
 	formatPath(pathname, &filepath[0], true);
 	struct stat temp_statbuf;
 	int ret2 = stat(&filepath[0], &temp_statbuf);
-	if (!ret2)
+
+	#ifdef PORTAL_LOG
+	fwrite("Checked on sdcard as: ", strlen("Checked on sdcard as: "), 1, stat_log);
+	fwrite((const void*)&filepath, strlen((const char*)&filepath), 1, stat_log);
+	fwrite((const void*)&"\n", 1, 1, stat_log);
+	fwrite("Result: ", strlen("Result: "), 1, stat_log);
+	#endif
+
+	if (!ret2) {
+
+		#ifdef PORTAL_LOG
+		fwrite("true\n\n", strlen("true\n\n"), 1, stat_log);
+		fclose(stat_log);
+		stat_lock = false;
+		#endif
+
 		return stat(&filepath[0], statbuf);
+	}
+
+	#ifdef PORTAL_LOG
+	fwrite("false\n", strlen("false\n"), 1, stat_log);
+	#endif
+
 	formatPath(pathname, &filepath[0], false);
 	ret2 = stat(&filepath[0], &temp_statbuf);
-	if (!ret2)
+
+	#ifdef PORTAL_LOG
+	fwrite("Checked on sdcard as: ", strlen("Checked on sdcard as: "), 1, stat_log);
+	fwrite((const void*)&filepath, strlen((const char*)&filepath), 1, stat_log);
+	fwrite((const void*)&"\n", 1, 1, stat_log);
+	fwrite("Result: ", strlen("Result: "), 1, stat_log);
+	#endif
+
+	if (!ret2) {
+
+		#ifdef PORTAL_LOG
+		fwrite("true\n\n", strlen("true\n\n"), 1, stat_log);
+		fclose(stat_log);
+		stat_lock = false;
+		#endif
+
 		return stat(&filepath[0], statbuf);
+	}
+
+	#ifdef PORTAL_LOG
+	fwrite("false\n\n", strlen("false\n\n"), 1, stat_log);
+	fclose(stat_log);
+	stat_lock = false;
+	#endif
+
 	return ret;
 }
 
@@ -161,6 +223,7 @@ char filepath[256] = "";
 
 FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
+
 	#ifdef PORTAL_LOG
 	if (path && mode) {
 		while (nx_lock) 
@@ -177,6 +240,7 @@ FILE* fopen_nx_hook(const char* path, const char* mode) {
 		nx_lock = false;
 	}
 	#endif
+
 	if (strstr(mode, "w") || strstr(mode, "+") || strstr(mode, "a"))
 		return fopen_nx_original(path, mode);
 
