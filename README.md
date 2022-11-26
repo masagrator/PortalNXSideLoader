@@ -19,7 +19,7 @@ From releases download:
 
 Put `atmosphere` folder to root of sdcard (yes, your CFW won't be deleted...)
 
-# How to install mod
+# How to install PC mod
 
 Rename main mod folder (for example in case of Portal Reloaded it's "portalreloaded") to, depending on game:
 - Portal: `portal`
