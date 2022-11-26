@@ -36,12 +36,12 @@ Some mods are overwriting menu options, so you can lose access to Switch control
 
 Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
 
-Example of properly optimized mod:
+Examples of properly optimized mods:
 - Portal Reloaded
 - ERROR
 - Portal: Still Alive
 
-Example of badly optimized mod:
+Examples of badly optimized mods:
 - Portal Stories: Mel
 
 # Informations for mod makers
