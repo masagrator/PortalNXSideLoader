@@ -32,6 +32,15 @@ and put this folder into:
 
 All folder and file names inside romfs folder MUST be lower case!
 
+Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
+
+Example of properly optimized mod:
+- Portal Reloaded
+- ERROR
+- Portal: Still Alive
+
+Example of badly optimized mod:
+- Portal Stories: Mel
 
 # Informations for mod makers
 
@@ -40,14 +49,6 @@ Few files in `nxcontent` may not be supported as they are preloaded with separat
 Game supports vscripts.
 
 Modifying source code is unsupported for this mod. You would need to make your own hooks manually.
-
-Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
-
-Example of properly optimized mod:
-- Portal Reloaded
-
-Example of badly optimized mod:
-- Portal Stories: Mel
 
 # How this works?
 
