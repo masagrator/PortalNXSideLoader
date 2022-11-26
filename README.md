@@ -30,7 +30,7 @@ and put this folder into:
 - Portal: `atmosphere/contents/01007BB017812000/romfs/nxcontent/`
 - Portal 2: `atmosphere/contents/0100ABD01785C000/romfs/nxcontent/`
 
-`nxcontent`, `portal` and `portal2_dlc2` names MUST be lower case!
+All folder and file names inside romfs folder MUST be lower case!
 
 
 # Informations for mod makers
@@ -39,7 +39,6 @@ Few files in `nxcontent` may not be supported as they are preloaded with separat
 
 Game supports vscripts.
 
-All file and folder names must be lower case, otherwise expect issues.
 Modifying source code is unsupported for this mod. You would need to make your own hooks manually.
 
 Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
