@@ -106,7 +106,11 @@ int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 
 		return ret;
 	}
+
+	#ifdef PORTAL_LOG
 	fwrite("Found in game.zip: false\n", strlen("Found in game.zip: false\n"), 1, stat_log);
+	#endif
+
 	if (!strncmp(pathname, "/;", 2)) {
 
 		#ifdef PORTAL_LOG
