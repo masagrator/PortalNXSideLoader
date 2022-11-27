@@ -32,7 +32,7 @@ and put this folder into:
 
 All folder and file names inside romfs folder MUST be lower case!
 
-Some mods are overwriting menu options, so you can lose access to Switch controller settings. They are stored either freely somewhere inside mod folder OR they are packed to some vpk file.
+Some mods are overwriting menu options, so you can lose access to Switch controller settings and saving options. They are stored either freely somewhere inside mod folder OR they are packed to some vpk file.
 
 Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
 
