@@ -31,9 +31,12 @@ and put this folder into:
 - Portal 2: `atmosphere/contents/0100ABD01785C000/romfs/nxcontent/`
 
 All folder and file names inside romfs folder MUST be lower case!
+```
+Some mods are overwriting menu options, so you can lose access to Switch controller settings.
+If after installing mod you can't save anything in options, try to delete `gameinfo.txt` from mod folder. You may also delete custom options menu.
 
-Some mods are overwriting menu options, so you can lose access to Switch controller settings and saving options. They are stored either freely somewhere inside mod folder OR they are packed to some vpk file.
-
+They are stored either freely somewhere inside mod folder OR they are packed to some vpk file.
+```
 Mods need to have properly optimized CPU code, otherwise Switch will be choking. 
 
 Examples of properly optimized mods:
