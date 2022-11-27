@@ -310,6 +310,14 @@ Result fsOpenFile_hook(nn::fs::FileHandle* fileHandle, char const* path, nn::fs:
 	return ret;
 }
 
+Result (*fsCreateFile_original)(const char* filename, int64_t size);
+Result fsCreateFile_hook(const char* filename, int64_t size) {
+	Result ret = fsCreateFile_original(filename, size);
+	if (R_SUCCEEDED(ret) && !strncmp("save:/", filename, strlen("save:/")))
+		nn::fs::Commit("save");
+	return ret;
+}
+
 void (*fsCloseFile_original)(nn::fs::FileHandle fileHandle);
 void fsCloseFile_hook(nn::fs::FileHandle fileHandle) {
 	fsCloseFile_original(fileHandle);
@@ -338,6 +346,7 @@ void Portal_main()
 	A64HookFunction((void**)&stat_nx, reinterpret_cast<void*>(stat_nx_hook), (void**)&stat_nx_original);
 	A64HookFunction((void**)&nn::fs::OpenFile, reinterpret_cast<void*>(fsOpenFile_hook), (void**)&fsOpenFile_original);
 	A64HookFunction((void**)&nn::fs::CloseFile, reinterpret_cast<void*>(fsCloseFile_hook), (void**)&fsCloseFile_original);
+	A64HookFunction((void**)&nn::fs::CreateFile, reinterpret_cast<void*>(fsCreateFile_hook), (void**)&fsCreateFile_original);
 
 	#ifdef PORTAL2
 		#ifdef PDEBUG
