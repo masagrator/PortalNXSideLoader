@@ -102,5 +102,7 @@ namespace fs {
     Result FormatSdCard();
     Result FormatSdCardDryRun();
     bool IsExFatSupported();
+
+    Result Commit(const char* mountname);
 };  // namespace fs
 };  // namespace nn
