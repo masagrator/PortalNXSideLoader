@@ -247,17 +247,6 @@ char filepath[256] = "";
 FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
 
-	#ifdef PORTAL
-	if (strstr(path, "save/"))
-		return fopen_nx_original(path, mode);
-	if (strstr(path, "/save"))
-		return fopen_nx_original(path, mode);
-	if (!strncmp(path, "/portal/cfg/config.cfg", strlen("/portal/cfg/config.cfg")))
-		return fopen_nx_original(path, mode);
-	if (!strncmp(path, "/portal/glshaders/glshaders.cfg", strlen("/portal/glshaders/glshaders.cfg")))
-		return fopen_nx_original(path, mode);
-	#endif
-
 	while (nx_lock) 
 		nn::os::SleepThread(nn::TimeSpan(1000000));
 	nx_lock = true;
