@@ -12,6 +12,7 @@
 #include "nn/fs.h"
 #include "nn/nifm.h"
 #include <sys/stat.h>
+#include <vector>
 
 bool nx_lock = false;
 bool stat_lock = false;
@@ -86,16 +87,22 @@ int stat_nx_hook(const char* pathname, struct stat* statbuf) {
 		nn::os::SleepThread(nn::TimeSpan(1000000));
 	stat_lock = true;
 
-	#ifdef PORTAL_LOG
-	if (pathname) {
-		stat_log = fopen("sdmc:/Portal_stat.txt", "a");
-		if (stat_log) {
-			fwrite("Original path: ", strlen("Original path: "), 1, stat_log);
-			fwrite((const void*)pathname, strlen(pathname), 1, stat_log);
-			fwrite((const void*)&"\n", 1, 1, stat_log);
-		}
+	if (pathname)  {
+
+		#ifdef PORTAL_LOG
+			stat_log = fopen("sdmc:/Portal_stat.txt", "a");
+			if (stat_log) {
+				fwrite("Original path: ", strlen("Original path: "), 1, stat_log);
+				fwrite((const void*)pathname, strlen(pathname), 1, stat_log);
+				fwrite((const void*)&"\n", 1, 1, stat_log);
+			}
+		#endif
 	}
-	#endif
+
+	else {
+		stat_lock = false;
+		return stat_nx_original(pathname, statbuf);
+	}
 
 	int ret = stat_nx_original(pathname, statbuf);
 	if (!ret) {
@@ -194,16 +201,20 @@ struct fopen2Struct {
 void (*fopen2_original)(fopen2Struct* _struct, void* x1, const char* path);
 void fopen2_hook(fopen2Struct* _struct, void* x1, const char* path){
 	#ifdef PORTAL_LOG
-	static bool log_init = false;
-	if (!log_init) {
 		nn::fs::MountSdCardForDebug("sdmc");
-		nx_log = fopen("sdmc:/Portal.txt", "w");
-		stat_log = fopen("sdmc:/Portal_stat.txt", "w");
+		while (nx_lock) 
+			nn::os::SleepThread(nn::TimeSpan(1000000));
+		nx_lock = true;
+
+		nx_log = fopen("sdmc:/Portal.txt", "a");
+		fwrite((const void*)"fopen2: ", strlen("fopen2: "), 1, nx_log);
+		fwrite((const void*)path, strlen(path), 1, nx_log);
+		fwrite((const void*)"\n", 1, 1, nx_log);
 		fclose(nx_log);
-		fclose(stat_log);
-		log_init = true;
-	}
+
+		nx_lock = false;
 	#endif
+
 	char filepath[256] = "";
 	formatPath(path, &filepath[0], false);
 
@@ -236,6 +247,17 @@ char filepath[256] = "";
 FILE* (*fopen_nx_original)(const char* path, const char* mode);
 FILE* fopen_nx_hook(const char* path, const char* mode) {
 
+	#ifdef PORTAL
+	if (strstr(path, "save/"))
+		return fopen_nx_original(path, mode);
+	if (strstr(path, "/save"))
+		return fopen_nx_original(path, mode);
+	if (!strncmp(path, "/portal/cfg/config.cfg", strlen("/portal/cfg/config.cfg")))
+		return fopen_nx_original(path, mode);
+	if (!strncmp(path, "/portal/glshaders/glshaders.cfg", strlen("/portal/glshaders/glshaders.cfg")))
+		return fopen_nx_original(path, mode);
+	#endif
+
 	while (nx_lock) 
 		nn::os::SleepThread(nn::TimeSpan(1000000));
 	nx_lock = true;
@@ -258,20 +280,45 @@ FILE* fopen_nx_hook(const char* path, const char* mode) {
 		return fopen_nx_original(path, mode);
 	}
 
-	nn::fs::FileHandle filehandle;
 	formatPath(path, &filepath[0], true);
 
-	if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read))) {
+	FILE* file_temp = fopen(&filepath[0], "rb");
+	if(!file_temp) {
 		formatPath(path, &filepath[0], false);
+		file_temp = fopen(&filepath[0], "rb");
 
-		if(R_FAILED(nn::fs::OpenFile(&filehandle, &filepath[0], nn::fs::OpenMode_Read))) {
+		if(!file_temp) {
 			nx_lock = false;
 			return fopen_nx_original(path, mode);
 		}
 	}
-	nn::fs::CloseFile(filehandle);
+	fclose(file_temp);
 	nx_lock = false;
 	return fopen(&filepath[0], mode);
+}
+
+std::vector<void*> handle_vector;
+
+Result (*fsOpenFile_original)(nn::fs::FileHandle* fileHandle, char const* path, nn::fs::OpenMode mode);
+Result fsOpenFile_hook(nn::fs::FileHandle* fileHandle, char const* path, nn::fs::OpenMode mode) {
+	Result ret = fsOpenFile_original(fileHandle, path, mode);
+	if ((mode & nn::fs::OpenMode_Write) 
+		&& R_SUCCEEDED(ret) 
+		&& !strncmp("save:/", path, strlen("save:/"))
+		&& std::find(handle_vector.cbegin(), handle_vector.cend(), fileHandle -> handle) == handle_vector.cend())
+			handle_vector.push_back(fileHandle -> handle);
+	return ret;
+}
+
+void (*fsCloseFile_original)(nn::fs::FileHandle fileHandle);
+void fsCloseFile_hook(nn::fs::FileHandle fileHandle) {
+	fsCloseFile_original(fileHandle);
+	auto itr = std::find(handle_vector.cbegin(), handle_vector.cend(), fileHandle.handle);
+	if (itr != handle_vector.cend()) {
+		handle_vector.erase(itr);
+		nn::fs::Commit("save");
+
+	}
 }
 
 void Portal_main()
@@ -287,7 +334,10 @@ void Portal_main()
 
 
 	A64HookFunction((void**)&fopen_nx, reinterpret_cast<void*>(fopen_nx_hook), (void**)&fopen_nx_original);
+	
 	A64HookFunction((void**)&stat_nx, reinterpret_cast<void*>(stat_nx_hook), (void**)&stat_nx_original);
+	A64HookFunction((void**)&nn::fs::OpenFile, reinterpret_cast<void*>(fsOpenFile_hook), (void**)&fsOpenFile_original);
+	A64HookFunction((void**)&nn::fs::CloseFile, reinterpret_cast<void*>(fsCloseFile_hook), (void**)&fsCloseFile_original);
 
 	#ifdef PORTAL2
 		#ifdef PDEBUG
