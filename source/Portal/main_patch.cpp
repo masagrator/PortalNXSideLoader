@@ -309,8 +309,9 @@ Result fsCreateFile_hook(const char* filename, int64_t size) {
 
 void (*fsCloseFile_original)(nn::fs::FileHandle fileHandle);
 void fsCloseFile_hook(nn::fs::FileHandle fileHandle) {
+	void* handle = fileHandle.handle;
 	fsCloseFile_original(fileHandle);
-	auto itr = std::find(handle_vector.cbegin(), handle_vector.cend(), fileHandle.handle);
+	auto itr = std::find(handle_vector.cbegin(), handle_vector.cend(), handle);
 	if (itr != handle_vector.cend()) {
 		handle_vector.erase(itr);
 		nn::fs::Commit("save");
