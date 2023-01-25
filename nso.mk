@@ -44,7 +44,7 @@ CXXFLAGS	:= $(PORTAL) $(CFLAGS) -std=gnu++20 -fpermissive -fno-rtti -fomit-frame
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS  =  -specs=../switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map),--version-script=$(TOPDIR)/exported.txt -Wl,-init=__custom_init -Wl,-fini=__custom_fini -Wl,--export-dynamic -nodefaultlibs
 
-LIBS	:= -lstdc++ -u malloc -lzstd
+LIBS	:= -lstdc++ -u malloc
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
